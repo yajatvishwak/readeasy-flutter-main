@@ -138,6 +138,7 @@ class _ReaderState extends State<Reader> {
                                           style: TextStyle(
                                             fontSize: 32 + fontSize * 100,
                                             fontWeight: FontWeight.normal,
+                                            fontFamily: "od",
                                             color: Colors.white,
                                           ),
                                         ),
@@ -147,6 +148,7 @@ class _ReaderState extends State<Reader> {
                                         style: TextStyle(
                                           fontSize: 32 + fontSize * 100,
                                           fontWeight: FontWeight.normal,
+                                          fontFamily: "od",
                                           color: Colors.black,
                                         ),
                                       ))))

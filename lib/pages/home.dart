@@ -58,84 +58,87 @@ class _HomeState extends State<Home> {
       body: SafeArea(
           child: Padding(
         padding: const EdgeInsets.all(17.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          // ignore: prefer_const_literals_to_create_immutables
-          children: [
-            Text(
-              "Welcome " + name,
-              style: TextStyle(fontSize: 24),
-            ),
-            SizedBox(
-              height: 20,
-            ),
-            SizedBox(
-                width: double.infinity,
-                child: ElevatedButton(
-                    onPressed: () async {
-                      FilePickerResult? result =
-                          await FilePicker.platform.pickFiles();
-                      if (result != null) {
-                        print(result.files.single.path);
-                        SharedPreferences prefs =
-                            await SharedPreferences.getInstance();
-                        var url = Uri.parse(dotenv.env['BASEURL']! + 'addpdf');
-                        var request = http.MultipartRequest("POST", url);
-                        request.fields['id'] = prefs.getString("id") ?? "";
-                        request.files.add(new http.MultipartFile.fromBytes(
-                          'pdf',
-                          await File.fromUri(
-                                  Uri.parse(result.files.single.path ?? ""))
-                              .readAsBytes(),
-                        ));
-                        request.send().then((response) {
-                          if (response.statusCode == 200) getInitVals();
-                        });
-                      } else {
-                        // User canceled the picker
-                      }
-                    },
-                    child: Text("Add Pdf"))),
-            SizedBox(
-              height: 30,
-            ),
-            Text(
-              "Your PDFs",
-              style: TextStyle(fontSize: 24),
-            ),
-            ListView.builder(
-              scrollDirection: Axis.vertical,
-              shrinkWrap: true,
-              padding: const EdgeInsets.all(8),
-              itemCount: pdfs.length,
-              itemBuilder: (_, index) {
-                return Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Material(
-                      elevation: 3,
-                      shadowColor: Colors.blueGrey,
-                      child: ListTile(
-                        title: Text(pdfs[index]["filetitle"]),
-                        subtitle: Text(pdfs[index]["filename"]),
-                        leading: IconButton(
-                            onPressed: () {}, icon: Icon(Icons.book)),
-                        trailing: IconButton(
-                            onPressed: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => Reader(
-                                    filename: pdfs[index]["filename"],
+        child: SingleChildScrollView(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            // ignore: prefer_const_literals_to_create_immutables
+            children: [
+              Text(
+                "Welcome " + name,
+                style: TextStyle(fontSize: 24),
+              ),
+              SizedBox(
+                height: 20,
+              ),
+              SizedBox(
+                  width: double.infinity,
+                  child: ElevatedButton(
+                      onPressed: () async {
+                        FilePickerResult? result =
+                            await FilePicker.platform.pickFiles();
+                        if (result != null) {
+                          print(result.files.single.path);
+                          SharedPreferences prefs =
+                              await SharedPreferences.getInstance();
+                          var url =
+                              Uri.parse(dotenv.env['BASEURL']! + 'addpdf');
+                          var request = http.MultipartRequest("POST", url);
+                          request.fields['id'] = prefs.getString("id") ?? "";
+                          request.files.add(new http.MultipartFile.fromBytes(
+                            'pdf',
+                            await File.fromUri(
+                                    Uri.parse(result.files.single.path ?? ""))
+                                .readAsBytes(),
+                          ));
+                          request.send().then((response) {
+                            if (response.statusCode == 200) getInitVals();
+                          });
+                        } else {
+                          // User canceled the picker
+                        }
+                      },
+                      child: Text("Add Pdf"))),
+              SizedBox(
+                height: 30,
+              ),
+              Text(
+                "Your PDFs",
+                style: TextStyle(fontSize: 24),
+              ),
+              ListView.builder(
+                scrollDirection: Axis.vertical,
+                shrinkWrap: true,
+                padding: const EdgeInsets.all(8),
+                itemCount: pdfs.length,
+                itemBuilder: (_, index) {
+                  return Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Material(
+                        elevation: 3,
+                        shadowColor: Colors.blueGrey,
+                        child: ListTile(
+                          title: Text(pdfs[index]["filetitle"]),
+                          subtitle: Text(pdfs[index]["filename"]),
+                          leading: IconButton(
+                              onPressed: () {}, icon: Icon(Icons.book)),
+                          trailing: IconButton(
+                              onPressed: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => Reader(
+                                      filename: pdfs[index]["filename"],
+                                    ),
                                   ),
-                                ),
-                              );
-                            },
-                            icon: Icon(Icons.chevron_right_outlined)),
-                      )),
-                );
-              },
-            )
-          ],
+                                );
+                              },
+                              icon: Icon(Icons.chevron_right_outlined)),
+                        )),
+                  );
+                },
+              )
+            ],
+          ),
         ),
       )),
     );
