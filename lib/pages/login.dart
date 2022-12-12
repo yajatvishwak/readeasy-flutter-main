@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:readeasy/app.dart';
 import 'package:http/http.dart' as http;
+import 'package:readeasy/pages/signup.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class Login extends StatefulWidget {
@@ -25,7 +26,7 @@ class _LoginState extends State<Login> {
       body: SafeArea(
         child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               Padding(
                 padding: const EdgeInsets.fromLTRB(8, 0, 8, 0),
@@ -59,6 +60,14 @@ class _LoginState extends State<Login> {
                   controller: passwordController,
                 ),
               ),
+              TextButton(
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => const Signup()),
+                    );
+                  },
+                  child: Text("New here? Signup here")),
               SizedBox(
                 width: double.infinity,
                 child: Padding(

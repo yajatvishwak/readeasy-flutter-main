@@ -19,6 +19,7 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
+  TextEditingController fileTitleController = TextEditingController();
   String name = "";
   List<dynamic> pdfs = [
     {"filetitle": "as", "filename": "e70a50fc-04c7-44bb-bea5-78dd675df6ee.pdf"},
@@ -70,34 +71,48 @@ class _HomeState extends State<Home> {
               SizedBox(
                 height: 20,
               ),
-              SizedBox(
-                  width: double.infinity,
-                  child: ElevatedButton(
-                      onPressed: () async {
-                        FilePickerResult? result =
-                            await FilePicker.platform.pickFiles();
-                        if (result != null) {
-                          print(result.files.single.path);
-                          SharedPreferences prefs =
-                              await SharedPreferences.getInstance();
-                          var url =
-                              Uri.parse(dotenv.env['BASEURL']! + 'addpdf');
-                          var request = http.MultipartRequest("POST", url);
-                          request.fields['id'] = prefs.getString("id") ?? "";
-                          request.files.add(new http.MultipartFile.fromBytes(
-                            'pdf',
-                            await File.fromUri(
-                                    Uri.parse(result.files.single.path ?? ""))
-                                .readAsBytes(),
-                          ));
-                          request.send().then((response) {
-                            if (response.statusCode == 200) getInitVals();
-                          });
-                        } else {
-                          // User canceled the picker
-                        }
-                      },
-                      child: Text("Add Pdf"))),
+              Column(
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text("Enter file title"),
+                  TextField(
+                    controller: fileTitleController,
+                  ),
+                  SizedBox(
+                      width: double.infinity,
+                      child: ElevatedButton(
+                          onPressed: () async {
+                            FilePickerResult? result =
+                                await FilePicker.platform.pickFiles();
+                            if (result != null) {
+                              print(result.files.single.path);
+                              SharedPreferences prefs =
+                                  await SharedPreferences.getInstance();
+                              var url =
+                                  Uri.parse(dotenv.env['BASEURL']! + 'addpdf');
+                              var request = http.MultipartRequest("POST", url);
+                              request.fields['id'] =
+                                  prefs.getString("id") ?? "";
+                              request.fields['filetitle'] =
+                                  fileTitleController.text;
+                              request.files
+                                  .add(new http.MultipartFile.fromBytes(
+                                'pdf',
+                                await File.fromUri(Uri.parse(
+                                        result.files.single.path ?? ""))
+                                    .readAsBytes(),
+                              ));
+                              request.send().then((response) {
+                                if (response.statusCode == 200) getInitVals();
+                              });
+                            } else {
+                              // User canceled the picker
+                            }
+                          },
+                          child: Text("Add Pdf"))),
+                ],
+              ),
               SizedBox(
                 height: 30,
               ),
@@ -118,7 +133,8 @@ class _HomeState extends State<Home> {
                         shadowColor: Colors.blueGrey,
                         child: ListTile(
                           title: Text(pdfs[index]["filetitle"]),
-                          subtitle: Text(pdfs[index]["filename"]),
+                          subtitle: Text(pdfs[index]["filename"],
+                              overflow: TextOverflow.ellipsis),
                           leading: IconButton(
                               onPressed: () {}, icon: Icon(Icons.book)),
                           trailing: IconButton(

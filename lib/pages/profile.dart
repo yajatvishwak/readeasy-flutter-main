@@ -1,7 +1,10 @@
+// ignore_for_file: prefer_const_constructors
+
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:readeasy/pages/login.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
 
@@ -116,12 +119,12 @@ class _ProfileState extends State<Profile> {
                 child: ElevatedButton(
                     onPressed: () async {
                       final prefs = await SharedPreferences.getInstance();
-
+                      print(prefs.getString("uid"));
                       Map payload = {
                         "username": usernameController.text,
                         "password": passwordController.text,
                         "name": nameController.text,
-                        "uid": prefs.getString("uid")
+                        "id": prefs.getString("id")
                       };
                       var url =
                           Uri.parse(dotenv.env["BASEURL"]! + 'editprofile');
@@ -153,7 +156,16 @@ class _ProfileState extends State<Profile> {
               child: SizedBox(
                 height: 60,
                 width: double.infinity,
-                child: ElevatedButton(onPressed: () {}, child: Text("Logout")),
+                child: ElevatedButton(
+                    onPressed: () async {
+                      final pref = await SharedPreferences.getInstance();
+                      pref.clear();
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => const Login()),
+                      );
+                    },
+                    child: Text("Logout")),
               ),
             )
           ],
